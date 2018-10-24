@@ -1,0 +1,30 @@
+{
+  "name": "lifeonscreen/nova-sort-relations",
+  "description": "This package improves support for sorting relations in Laravel Nova.",
+  "keywords": [
+    "laravel",
+    "nova",
+    "sort",
+    "relations"
+  ],
+  "authors": [
+    {
+      "name": "Jani Cerar",
+      "email": "jani.cerar@lifeonscreen.com"
+    }
+  ],
+  "license": "MIT",
+  "require": {
+    "php": ">=7.1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "LifeOnScreen\\SortRelations\\": "src/"
+    }
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
