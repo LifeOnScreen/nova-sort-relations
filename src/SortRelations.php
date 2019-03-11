@@ -9,6 +9,16 @@ namespace LifeOnScreen\SortRelations;
 trait SortRelations
 {
     /**
+     * Get the sortable columns for the resource.
+     *
+     * @return array
+     */
+    public static function sortableRelations(): array
+    {
+        return static::$sortRelations ?? [];
+    }
+
+    /**
      * Apply any applicable orderings to the query.
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
@@ -18,15 +28,16 @@ trait SortRelations
      */
     protected static function applyRelationOrderings(string $column, string $direction, $query)
     {
-        if (is_string(self::$sortRelations[$column])) {
-            return $query->orderBy(self::$sortRelations[$column], $direction);
+        $sortRelations = static::sortableRelations();
+
+        if (is_string($sortRelations[$column])) {
+            return $query->orderBy($sortRelations[$column], $direction);
         }
-        foreach (self::$sortRelations[$column] as $orderColumn) {
+        foreach ($sortRelations[$column] as $orderColumn) {
             $query->orderBy($orderColumn, $direction);
         }
 
         return $query;
-
     }
 
     /**
@@ -44,8 +55,10 @@ trait SortRelations
                 : $query;
         }
 
+        $sortRelations = static::sortableRelations();
+
         foreach ($orderings as $column => $direction) {
-            if (array_key_exists($column, self::$sortRelations)) {
+            if (array_key_exists($column, $sortRelations)) {
                 $query = self::applyRelationOrderings($column, $direction, $query);
             } else {
                 $query->orderBy($column, $direction);
