@@ -30,11 +30,22 @@ trait SortRelations
     {
         $sortRelations = static::sortableRelations();
 
+        $model = $query->getModel();
+        $relation = $column;
+        $related = $model->{$column}()->getRelated();
+
+        $foreignKey = Str::snake($relation) . '_' . $related->getKeyName();
+
+        $query->select($model->getTable() . '.*');
+        $query->join($related->getTable(), $model->qualifyColumn($foreignKey), '=', $related->qualifyColumn($related->getKeyName()));
         if (is_string($sortRelations[$column])) {
-            return $query->orderBy($sortRelations[$column], $direction);
+            $qualified = $related->qualifyColumn($sortRelations[$column]);
+            $query->orderBy($qualified, $direction);
         }
-        foreach ($sortRelations[$column] as $orderColumn) {
-            $query->orderBy($orderColumn, $direction);
+        if (is_array($sortRelations[$column])) {
+            foreach ($sortRelations[$column] as $orderColumn) {
+                $query->orderBy($related->qualifyColumn($orderColumn), $direction);
+            }
         }
 
         return $query;
