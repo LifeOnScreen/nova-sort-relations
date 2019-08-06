@@ -2,6 +2,8 @@
 
 namespace LifeOnScreen\SortRelations;
 
+use Illuminate\Support\Str;
+
 /**
  * Trait SortRelations
  * @package LifeOnScreen\SortRelations
@@ -37,7 +39,7 @@ trait SortRelations
         $foreignKey = Str::snake($relation) . '_' . $related->getKeyName();
 
         $query->select($model->getTable() . '.*');
-        $query->join($related->getTable(), $model->qualifyColumn($foreignKey), '=', $related->qualifyColumn($related->getKeyName()));
+        $query->leftJoin($related->getTable(), $model->qualifyColumn($foreignKey), '=', $related->qualifyColumn($related->getKeyName()));
         if (is_string($sortRelations[$column])) {
             $qualified = $related->qualifyColumn($sortRelations[$column]);
             $query->orderBy($qualified, $direction);
