@@ -44,17 +44,19 @@ trait SortRelations
         $relation = $sortRelations[$column];
         $related = $model->{$relation['relation']}()->getRelated();
 
-        $foreignKey = Str::snake($relation['relation']) . '_' . $related->getKeyName();
+        $foreignKey =  $model->{$relation['relation']}()->getForeignKeyName();
+        $ownerKey = $model->{$relation['relation']}()->getOwnerKeyName();
 
         $query->select($model->getTable() . '.*');
-        $query->leftJoin($related->getTable(), $model->qualifyColumn($foreignKey), '=', $related->qualifyColumn($related->getKeyName()));
+        $query->leftJoin($related->getTable(), $model->qualifyColumn($foreignKey), '=', $related->qualifyColumn($ownerKey));
         if (is_string($relation['columns'])) {
             $qualified = $related->qualifyColumn($relation['columns']);
             $query->orderBy($qualified, $direction);
         }
         if (is_array($relation['columns'])) {
             foreach ($relation['columns'] as $orderColumn) {
-                $query->orderBy($related->qualifyColumn($orderColumn), $direction);
+                $qualified = $related->qualifyColumn($orderColumn);
+                $query->orderBy($qualified, $direction);
             }
         }
 
