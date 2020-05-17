@@ -12,8 +12,7 @@ $ composer require lifeonscreen/nova-sort-relations
 
 ## Usage
 
-Include `LifeOnScreen\SortRelations\SortRelations` trait to your class. Define base by overriding `indexQuery`.
-Define sortable columns in `$sortRelations` array.
+Include `LifeOnScreen\SortRelations\SortRelations` trait to your class. Define sortable columns in `$sortRelations` array.
 
 ```php
 
