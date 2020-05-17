@@ -15,9 +15,17 @@ trait SortRelations
      *
      * @return array
      */
-    public static function sortableRelations(): array
+    public static function sortableRelations($query): array
     {
-        return static::$sortRelations ?? [];
+        $model = $query->getModel();
+        $return = [];
+        if (static::$sortRelations) {
+            foreach (static::$sortRelation as $relation => $columns) {
+                $relatedKey = $model->{$relation}()->getForeignKeyName();
+                $return[$relatedkey] = ['relation' => $relation, 'columns' => $columns];
+            }
+        }
+        return $return;
     }
 
     /**
@@ -30,22 +38,22 @@ trait SortRelations
      */
     protected static function applyRelationOrderings(string $column, string $direction, $query)
     {
-        $sortRelations = static::sortableRelations();
+        $sortRelations = static::sortableRelations($query);
 
         $model = $query->getModel();
-        $relation = $column;
-        $related = $model->{$column}()->getRelated();
+        $relation = $sortRelations[$column];
+        $related = $model->{$relation['relation']}()->getRelated();
 
-        $foreignKey = Str::snake($relation) . '_' . $related->getKeyName();
+        $foreignKey = Str::snake($relation['relation']) . '_' . $related->getKeyName();
 
         $query->select($model->getTable() . '.*');
         $query->leftJoin($related->getTable(), $model->qualifyColumn($foreignKey), '=', $related->qualifyColumn($related->getKeyName()));
-        if (is_string($sortRelations[$column])) {
-            $qualified = $related->qualifyColumn($sortRelations[$column]);
+        if (is_string($relation['columns'])) {
+            $qualified = $related->qualifyColumn($relation['columns']);
             $query->orderBy($qualified, $direction);
         }
-        if (is_array($sortRelations[$column])) {
-            foreach ($sortRelations[$column] as $orderColumn) {
+        if (is_array($relation['columns'])) {
+            foreach ($relation['columns'] as $orderColumn) {
                 $query->orderBy($related->qualifyColumn($orderColumn), $direction);
             }
         }
@@ -68,7 +76,7 @@ trait SortRelations
                 : $query;
         }
 
-        $sortRelations = static::sortableRelations();
+        $sortRelations = static::sortableRelations($query);
 
         foreach ($orderings as $column => $direction) {
             if (is_null($direction))
