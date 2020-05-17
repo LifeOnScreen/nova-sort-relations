@@ -24,21 +24,21 @@ use LifeOnScreen\SortRelations\SortRelations;
 class Product extends Resource
 {
     public static $sortRelations = [
-        // overriding id with product.id (this prevent ambiguous id, if you select multiple ids)
-        'id'               => 'product.id',
+        // Order product relation by product id...
+        'product'               => 'id',
         // overriding user relation sorting
         'user'         => [
             // sorting multiple columns
-            'users.name',
-            'users.surname',
+            'name',
+            'surname',
         ],
         // overriding company relation sorting
-        'company'          => 'company.name',
+        'company'          => 'name',
     ];
     
     public static function indexQuery(NovaRequest $request, $query)
     {
-        // You can modify your base query here.
+        // You can modify your base query here, only if necessary. Sort Relations will be applied automatically...
         return $query;
     }
 }
