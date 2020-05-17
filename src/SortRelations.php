@@ -71,6 +71,8 @@ trait SortRelations
         $sortRelations = static::sortableRelations();
 
         foreach ($orderings as $column => $direction) {
+            if (is_null($direction))
+              $direction = 'asc';
             if (array_key_exists($column, $sortRelations)) {
                 $query = self::applyRelationOrderings($column, $direction, $query);
             } else {
