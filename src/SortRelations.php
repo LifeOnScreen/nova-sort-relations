@@ -20,9 +20,9 @@ trait SortRelations
         $model = $query->getModel();
         $return = [];
         if (static::$sortRelations) {
-            foreach (static::$sortRelation as $relation => $columns) {
+            foreach (static::$sortRelations as $relation => $columns) {
                 $relatedKey = $model->{$relation}()->getForeignKeyName();
-                $return[$relatedkey] = ['relation' => $relation, 'columns' => $columns];
+                $return[$relatedKey] = ['relation' => $relation, 'columns' => $columns];
             }
         }
         return $return;
