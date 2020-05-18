@@ -48,7 +48,7 @@ trait SortRelations
         $ownerKey = $model->{$relation['relation']}()->getOwnerKeyName();
 
         $query->select($model->getTable() . '.*');
-        $query->leftJoin($related->getTable(), $model->qualifyColumn($foreignKey), '=', $related->qualifyColumn($ownerKey));
+        $query->leftJoin($related->getConnection()->getDatabaseName() . '.' . $related->getTable(), $model->qualifyColumn($foreignKey), '=', $related->qualifyColumn($ownerKey));
         if (is_string($relation['columns'])) {
             $qualified = $related->qualifyColumn($relation['columns']);
             $query->orderBy($qualified, $direction);
